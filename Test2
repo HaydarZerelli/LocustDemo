@@ -1,0 +1,27 @@
+#Test2
+from locust import SequentialTaskSet, constant, task, HttpUser
+
+
+class MyHTTPCat(SequentialTaskSet):
+
+    def on_start(self):
+        print("Start Test")
+    
+    @task()
+    def get_status1(self):
+        response = self.client.get("/100")
+        print("Get Status of 100 - Response:", response.status_code)
+
+    @task
+    def get_status2(self):
+        response = self.client.get("/200")
+        print("Get Status of 200 - Response:", response.status_code)
+
+    def on_stop(self):
+        print("Stop Test")
+
+
+class MyLoadTest(HttpUser):
+    host = "https://http.cat"
+    tasks = [MyHTTPCat]
+    wait_time = constant(1)
